@@ -62,15 +62,16 @@ contract RptToken is ReentrancyGuard {
         return balanceOfRpt[account];
     }
 
+    //There is a rounding difference when we try to divide the dividend amount (wei) to the number of tokens to calculate per-token dividend.
+    //For reconciliation and accurate record, we created a variable to store this "remaining" wei amount 
+    //so that: total received dividend = ditributed dividend + remaining wei.
+    //There is still one problem - if we set this function as public, anyone can call it and access to the way we calculate dividend? 
     function dividendDeposit(uint256 amount) public payable {
         require(msg.value == amount);
         remainingWei = msg.value % _totalSupply;
-        totalEarnedDividend += ((msg.value - remainingWei)/_totalSupply);
-        //There is a rounding difference when we try to divide the dividend amount (wei) to the number of tokens to calculate per-token dividend.
-        //For reconciliation and accurate record, we created a variable to store this "remaining" wei amount 
-        //so that: total received dividend = ditributed dividend + remaining wei.
-        //There is still one problem - if we set this function as public, anyone can call it and access to the way we calculate dividend?  
+        totalEarnedDividend += ((msg.value - remainingWei)/_totalSupply); 
     }
+
     
 
     function checkDividendBalance(address account) public view returns (uint256) {
@@ -88,3 +89,6 @@ contract RptToken is ReentrancyGuard {
         
     }
 }
+
+// We will need to write 2 functions transferFrom and approve to enable contracts to transfer tokens so that we can transfer token from seller
+//to buyer in the auction
