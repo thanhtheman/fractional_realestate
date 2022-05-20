@@ -15,10 +15,12 @@ contract RptToken is ReentrancyGuard {
     uint256 public alreadyPaidDividend;
     uint256 public remainingWei;
     event Transfer(address indexed from, address indexed to, uint256 quantityRPT);
+    event Approval(address indexed sender, address indexed spender, uint256 quantityRPT);
 
     mapping (address => uint256) public balanceOfRpt;
     mapping (address => uint256) public balanceOfDividend;
     mapping (address => uint256) public balanceOfAlreadyPaidDividend;
+    mapping (address => mapping (address => uint256)) public allowance;
 
     constructor () {
         operator == msg.sender;
@@ -55,6 +57,21 @@ contract RptToken is ReentrancyGuard {
         balanceOfRpt[from] -= quantityRPT;
         balanceOfRpt[to] += quantityRPT;
         emit Transfer (msg.sender, to, quantityRPT);
+        return true;
+    }
+
+
+    function approve(uint256 quantityRPT) external returns (bool success) {
+        allowance[msg.sender][operator] = quantityRPT;
+        emit Approval(msg.sender, operator, quantityRPT);
+        return true;
+    }
+
+    function transferFrom(address sender, address receiver, uint256 quantityRPT) external returns(bool success) {
+        allowance[sender][operator] -= quantityRPT;
+        balanceOfRpt[sender] -= quantityRPT;
+        balanceOfRpt[receiver] += quantityRPT;
+        emit Transfer(sender, receiver, quantityRPT);
         return true;
     }
 
