@@ -92,8 +92,8 @@ contract RptToken is ReentrancyGuard {
     
 
     function checkDividendBalance(address account) public view returns (uint256) {
-        uint256 eligibleDividend = balanceOfDividend[account];
-        return eligibleDividend;
+        uint256 eligibleDividendd = balanceOfDividend[account];
+        return eligibleDividendd;
     }
 
     function withdraw(uint256 amount) public updateDividendStatus(msg.sender) nonReentrant {
