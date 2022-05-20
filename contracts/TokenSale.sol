@@ -58,7 +58,7 @@ contract TokenSale is RptToken {
     function buyRPT (address client, address _operator, uint256 quantityRPT) public payable {
         require(totalRptSold() + quantityRPT <= totalSupply(), "RPT token cap is at 3500");
         uint256 usdToWei = usdToWeiRate();
-        uint256 paymentInUSD = ((rptPriceUSD*quantityRPT*feeRateBasisPoint) / feeRateBase);
+        uint256 paymentInUSD = (rptPriceUSD*quantityRPT) + ((rptPriceUSD*quantityRPT*feeRateBasisPoint) / feeRateBase);
         uint256 weiRequired = paymentInUSD*usdToWei;
         require(msg.value >= weiRequired, "Payment is not sufficient!");
         balanceEth[_operator] += weiRequired;

@@ -3,8 +3,9 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./TokenSale.sol";
 
-contract RptToken is ReentrancyGuard {
+contract RptToken is TokenSale, ReentrancyGuard {
     address public operator;
     string public _name = "Real Property Token";
     string public _symbol = "RPT";
@@ -61,7 +62,7 @@ contract RptToken is ReentrancyGuard {
     }
 
 
-    function approve(uint256 quantityRPT) external returns (bool success) {
+    function approve(uint256 quantityRPT) public returns (bool success) {
         allowance[msg.sender][operator] = quantityRPT;
         emit Approval(msg.sender, operator, quantityRPT);
         return true;

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: unlicense
 pragma solidity ^0.8.7;
+import "./RptToken.sol";
 import "./TokenSale.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -12,9 +13,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 //6. Return the ETH bids that don't win the auction. 
 //7. If there is no submit, terminate the auction as soon as the clock hits 0.
 
-contract Auction is TokenSale {
+contract Auction is RptToken, TokenSale {
     address public seller;
-    uint256 public floorPriceInUSD;
      uint256 public floorPriceInWei;
     uint256 public quantityRPTSales;
     uint256 public startBlock;
@@ -27,9 +27,9 @@ contract Auction is TokenSale {
     mapping(address => uint256) public bidderFund;
 
     event NewHighestBid(address bidder, uint256 bid, address highestBidder, uint256 highestBid, uint256 highestBindingBid);
-    event RPTTransferred(address seller, address winner, uint256 quantityRPTSales);
     event Withdrawn(address withdrawer, address withdrawalAccount, uint256 withdrawalAmount);
     event AuctionCancelled();
+    event CommissioPaid(address seller, uint256 amount);
     
     constructor (address _seller, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) {
         require(_seller == msg.sender);
@@ -82,8 +82,9 @@ contract Auction is TokenSale {
     //2. He successfully pays a listing fee $ to proves his seriousness in selling. 
     function setFloorPriceAndQuantitySales (uint256 _floorPriceInUSD, uint256 _quantityRPTSales) public payable returns (uint256, uint256) {
         require(seller == msg.sender && balanceOfRpt[seller] >= quantityRPTSales, "Insufficient tokens to sell!");
-        floorPriceInUSD = _floorPriceInUSD;
-        floorPriceInWei = floorPriceInUSD*usdToWeiRate();
+        approve(_quantityRPTSales);
+        // If the seller input $145 USD, then the equivalent representation of $145 is 14500 on our smart contract. The front-end must do the conversion and feed 14500 to our smart contract.
+        floorPriceInWei = _floorPriceInUSD*usdToWeiRate();
         quantityRPTSales = _quantityRPTSales;
         return (floorPriceInWei, _quantityRPTSales);
     }
@@ -121,12 +122,16 @@ contract Auction is TokenSale {
             withdrawalAccount = msg.sender;
             withdrawalAmount = bidderFund[msg.sender];
         } else {
-            balanceOfRpt[seller] -= quantityRPTSales;
-            balanceOfRpt[highestBidder] += quantityRPTSales;
-            emit RPTTransferred(seller, highestBidder, quantityRPTSales);
+            transferFrom(seller, highestBidder, quantityRPTSales); //The tokens are trasnferred from the seller to the winner of the auction
+            
             if (msg.sender == seller) {
+                uint256 commissionFee = (highestBindingBid + (highestBindingBid*feeRateBasispoint) / feeRateBase); // Commission fee is 1.5% of the sale price, which is the highestBindingBid.
                 withdrawalAccount = highestBidder;
-                withdrawalAmount = highestBindingBid;
+                withdrawalAmount = (highestBindingBid - commissionFee);
+                balanceEth[operator] = commissionFee;
+                (bool commission, ) = operator.call{value: commissionFee}(""); // The seller pays the operator a commission fee. 
+                require (commission, "Commission has not been paid");
+                emit CommissionPaid(msg.sender, commissionFee);
                 sellerWithdrawn = true;
             } else if (msg.sender == highestBidder) {
                 withdrawalAccount = highestBidder;
@@ -145,7 +150,7 @@ contract Auction is TokenSale {
         require(withdrawalAmount != 0);
         bidderFund[withdrawalAccount] -= withdrawalAmount;
 
-        (bool withdrawn, ) = msg.sender.call{value: withdrawalAmount}("");
+        (bool withdrawn, ) = msg.sender.call{value: withdrawalAmount}(""); //The seller/winner/other_bidders get their money.
         require(withdrawn, "Withdraw request failed!");
         emit Withdrawn(msg.sender, withdrawalAccount, withdrawalAmount);
 
