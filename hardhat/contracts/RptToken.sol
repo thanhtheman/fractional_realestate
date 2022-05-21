@@ -67,7 +67,7 @@ contract RptToken is ReentrancyGuard {
         return true;
     }
 
-    function transferFrom(address sender, address receiver, uint256 quantityRPT) external returns(bool success) {
+    function transferFrom(address sender, address receiver, uint256 quantityRPT) public returns(bool success) {
         allowance[sender][operator] -= quantityRPT;
         balanceOfRpt[sender] -= quantityRPT;
         balanceOfRpt[receiver] += quantityRPT;

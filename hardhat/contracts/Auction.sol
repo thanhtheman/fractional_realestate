@@ -131,7 +131,7 @@ contract Auction is RptToken, TokenSale {
             // Commission fee is 1.5% of the sale price, which is the highestBindingBid.
             // Regarding the highest bidder, he/she will be able to withdraw the diffference = highestBid - highestBindingBid
             if (msg.sender == seller) {
-                uint256 commissionFee = (highestBindingBid + (highestBindingBid*feeRateBasispoint) / feeRateBase); 
+                uint256 commissionFee = (highestBindingBid + (highestBindingBid*feeRateBasisPoint) / feeRateBase); 
                 withdrawalAccount = highestBidder;
                 withdrawalAmount = (highestBindingBid - commissionFee);
                 balanceEth[operator] = commissionFee;
@@ -167,7 +167,7 @@ contract Auction is RptToken, TokenSale {
     //The seller will have to pay 1,000,000 GWei for EVERY SINGLE TOKEN that is listed for sales.
     //Once the auction is , participants can call the withdraw function to get their money back.
     function cancelAuction() private onlySeller onlyBeforeEnd onlyNotCancelled returns (bool _auctionCancelled) {
-        uint256 cancellationFee = (quantityRPRSales*1000000);
+        uint256 cancellationFee = (quantityRPTSales*1000000);
         (bool cancellation, ) = operator.call{value: cancellationFee}("");  
         require (cancellation, "cancellation fee has not been paid");
         cancelled = true;
