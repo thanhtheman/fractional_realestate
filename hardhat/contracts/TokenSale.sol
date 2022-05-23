@@ -18,7 +18,7 @@ contract TokenSale is RptToken {
 
 
     constructor () {
-        require(operator == msg.sender);
+        operator = msg.sender;
         //Each RET Token is priced at $100, interal USD representation is 10000
         rptPriceUSD = 10000;
         //fee rate = feeRate BasisPoint / feeRateBase = 1.5% 
