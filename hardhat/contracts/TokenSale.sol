@@ -4,7 +4,7 @@
 // 1. SafeMath adn the overflow problem
 pragma solidity ^0.8.7;
 
-import "./AggregatorV3Interface.sol";
+import "./PriceConsumerV3.sol";
 import "./RptToken.sol";
 
 contract TokenSale is RptToken { 

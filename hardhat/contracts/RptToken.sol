@@ -51,7 +51,7 @@ contract RptToken is ReentrancyGuard, Ownable {
         return _decimals;
     }
 
-
+    
     modifier updateDividendStatus (address account) {
        uint256 owedDividend = (totalEarnedDividend - alreadyPaidDividend);
        balanceOfDividend[msg.sender] += (balanceOfRpt[msg.sender] * owedDividend);
@@ -59,9 +59,11 @@ contract RptToken is ReentrancyGuard, Ownable {
         _;
     }
 
-    // The mint function is only called once in the constructor and it will never be called again to ensure the total supply of 3500 tokens.
+    // With the private visibility, Tthe mint function is only called once in the constructor
+    // it will never be called at anywhere else in this contract
+    // to ensure the total supply of 3500 tokens.
     function mint(address account, uint256 amount) private {  
-        balanceOfRpt[account] = amount;
+        balanceOfRpt[account] += amount;
     }
     function transfer(address from, address to, uint256 quantityRPT) public updateDividendStatus(from) updateDividendStatus(to) returns (bool success) {
         require(balanceOfRpt[from] >= quantityRPT, "You don't have sufficient fund!");
@@ -113,10 +115,6 @@ contract RptToken is ReentrancyGuard, Ownable {
         balanceOfDividend[msg.sender] -= amount;
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Dividend transfer failed!");
-        // How can an investor send dividend to his own address from the contract?
-        
     }
 }
 
-// We will need to write 2 functions transferFrom and approve to enable contracts to transfer tokens so that we can transfer token from seller
-//to buyer in the auction
