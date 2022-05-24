@@ -22,13 +22,15 @@ contract Auction is RptToken, TokenSale {
     event AuctionCancelled();
     event CommissionPaid(address seller, uint256 amount);
     
-    constructor (address _seller, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) {
-        require(_seller == msg.sender);
+    constructor (address _operator, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) {
+        require(_operator == msg.sender);
         require(_endBlock > _startBlock);
         require(block.number > _startBlock);
         require(block.number < _endBlock);
 
-        seller = _seller;
+        //need to operator to initiate this contract
+        // We don't need to assign the operator to be the seller, the seller will be assigned once a customer calls a function
+        // seller = _seller;
         bidIncrement = _bidIncrement;
         startBlock = _startBlock;
         endBlock = _endBlock;

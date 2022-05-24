@@ -109,7 +109,7 @@ contract RptToken is ReentrancyGuard, Ownable {
         return eligibleDividendd;
     }
 
-    function withdraw(uint256 amount) public updateDividendStatus(msg.sender) nonReentrant {
+    function withdrawDividend(uint256 amount) public updateDividendStatus(msg.sender) nonReentrant {
         require(operator != msg.sender);
         require(amount <= balanceOfDividend[msg.sender], "Insufficient balance to withdraw!");
         balanceOfDividend[msg.sender] -= amount;
