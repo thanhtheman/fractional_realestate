@@ -1,18 +1,11 @@
 const hre = require("hardhat");
 
 async function main () {
-    // const [operator] = await hre.ethers.getSigner();
-    const RptToken = await hre.ethers.getContractFactory("RptToken");
-    const TokenSale = await hre.ethers.getContractFactory("TokenSale");
-    // const Auction = await hre.ethers.getContractFactory("Auction");
-    
-    const RptTokenContract = await RptToken.deploy();
-    console.log(`RptTokenContract Deployed to: ${RptTokenContract.address}`);
-    const TokenSaleContract = await TokenSale.deploy();
-    console.log(`TokenSaleContract Deployed to: ${TokenSaleContract.address}`);
-    // const AuctionContract = await Auction.deploy();
-    // console.log(`AuctionContract Deployed to: ${AuctionContract.address}`);
-    // console.log(`Contracts are deployed by ${operator.address}`);
+    const Auction = await hre.ethers.getContractFactory("Auction");
+    const AuctionContract = await Auction.deploy("0x6eda30cc59f13c8973f60a167ba4b343c7e2430b", 1000, 10738631, 10738933);
+    await AuctionContract.deployed()
+    console.log(`AuctionContract is deployed to: ${AuctionContract.address}`);
+
 }
 
 main()

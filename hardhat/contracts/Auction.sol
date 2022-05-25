@@ -84,7 +84,7 @@ contract Auction is RptToken, TokenSale {
         return highestBindingBid;
     }
 
-    //The Seller can the floor (minimum) price and the quanity of RPT tokens he wants to sell. Next,
+    //The Seller can set the floor (minimum) price and the quanity of RPT tokens he wants to sell. Next,
     //He will approve/authorize the operator to transfer his sales tokens. 
 
     function setFloorPriceAndQuantitySales (uint256 _floorPriceInUSD, uint256 _quantityRPTSales) public payable returns (uint256, uint256) {
@@ -117,7 +117,7 @@ contract Auction is RptToken, TokenSale {
 
   
 
-    function withdraw() external onlyEndedOrCancelled nonReentrant returns (bool success) {
+    function withdrawFund() external onlyEndedOrCancelled nonReentrant returns (bool success) {
         address withdrawalAccount;
         uint256 withdrawalAmount;
         
