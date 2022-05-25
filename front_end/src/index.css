@@ -11,3 +11,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#example {
+  width: 5rem;
+  height: 5rem;
+  background-color: aqua;
+  border-radius: 10px;
+  position: absolute;
+  margin: 15px;
+}
+
+#text {
+  width: 2rem;
+  height: 3rem;
+  position: absolute;
+  margin: 25px;
+  flex: content;
+}
