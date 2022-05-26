@@ -60,8 +60,8 @@ contract RptToken is ReentrancyGuard, Ownable {
     }
 
     // With the private visibility, Tthe mint function is only called once in the constructor
-    // it will never be called at anywhere else in this contract
-    // to ensure the total supply of 3500 tokens.
+    // EOA can't call it AND it will never be called at anywhere else in this contract
+    // to cap the total supply of 3500 tokens.
     function mint(address account, uint256 amount) private {  
         balanceOfRpt[account] += amount;
     }
@@ -110,7 +110,6 @@ contract RptToken is ReentrancyGuard, Ownable {
     }
 
     function withdrawDividend(uint256 amount) public updateDividendStatus(msg.sender) nonReentrant {
-        require(operator != msg.sender);
         require(amount <= balanceOfDividend[msg.sender], "Insufficient balance to withdraw!");
         balanceOfDividend[msg.sender] -= amount;
         (bool success, ) = msg.sender.call{value: amount}("");

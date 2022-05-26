@@ -21,8 +21,8 @@ contract TokenSale is RptToken {
         //Each RET Token is priced at $100, interal USD representation is 10000
         rptPriceUSD = 10000;
         //fee rate = feeRate BasisPoint / feeRateBase = 1.5% 
-        feeRateBase = 10000;
-        feeRateBasisPoint = 150;
+        feeRateBase = 1000;
+        feeRateBasisPoint = 15;
         priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
     }
 
@@ -37,13 +37,6 @@ contract TokenSale is RptToken {
 
     error insufficientBalance();
 
-    // function sendRPT (address client, uint256 quantityRPT) internal {
-    //     if (quantityRPT > balanceOfRpt[operator])
-    //     revert insufficientBalance();
-    //     transfer(operator, client, quantityRPT);
-    //     _totalRptSold += quantityRPT;
-    // }
-
 
     AggregatorV3Interface internal priceFeed;
     
@@ -55,21 +48,30 @@ contract TokenSale is RptToken {
     }
 
     function buyRPT (address client, uint256 quantityRPT) public payable {
+
+        // Making sure the total supply is cap at 3500 
+        // and the operator still have enough RPT Tokens to sell
         require(totalRptSold() + quantityRPT <= totalSupply(), "RPT token cap is at 3500");
+        if (quantityRPT > balanceOfRpt[operator])
+        revert insufficientBalance();
+        
+        // Convert Payment in USD into Wei and check if the client's payment is enough
+        // including 1.5% fee
         uint256 usdToWei = usdToWeiRate();
-        //  adding parameter _usdToWei for testing purpose
+        console.log("The exchange rate is %s", usdToWei);
         uint256 paymentInUSD = (rptPriceUSD*quantityRPT) + ((rptPriceUSD*quantityRPT*feeRateBasisPoint) / feeRateBase);
         uint256 weiRequired = paymentInUSD*usdToWei;
+        console.log("The wei required is %s", weiRequired);
         require(msg.value >= weiRequired, "Payment is not sufficient!");
         balanceEth[operator] += weiRequired;
         emit TransferEth(client, operator, weiRequired);
-        // sendRPT(client, quantityRPT);
-        // replaced it with direct code below
-        if (quantityRPT > balanceOfRpt[operator])
-        revert insufficientBalance();
-        console.log("Here it is %s to %s", quantityRPT, balanceOfRpt[operator]);
+        
+        // Send RPT Tokens to the client and update total tokens sold
         transfer(operator, client, quantityRPT);
         _totalRptSold += quantityRPT;
+        
+        // Making sure the new balance is correct
+        console.log("Operato's balance is %s and Acct2's balance is %s", balanceOfRpt[operator], balanceOfRpt[client]);
         console.log("Total RPT Sold is %s", _totalRptSold);
     }
 }

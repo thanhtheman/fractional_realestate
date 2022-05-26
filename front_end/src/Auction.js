@@ -53,8 +53,8 @@ const Auction = () => {
     
     const getUsdToEther = async () => {
         let usdToWeiRate = await contract.usdToWeiRate();
-        const usdToWei = ethers.utils.formatEther(usdToWeiRate);
-        setUsdToEther(usdToWei);
+        // const usdToWei = ethers.utils.formatEther(usdToWeiRate);
+        setUsdToEther(usdToWeiRate);
     }
 
     const buyRPT = async () => {

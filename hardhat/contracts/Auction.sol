@@ -87,7 +87,7 @@ contract Auction is RptToken, TokenSale {
     //The Seller can set the floor (minimum) price and the quanity of RPT tokens he wants to sell. Next,
     //He will approve/authorize the operator to transfer his sales tokens. 
 
-    function setFloorPriceAndQuantitySales (uint256 _floorPriceInUSD, uint256 _quantityRPTSales, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) public payable returns (uint256, uint256) {
+    function setFloorPriceAndQuantitySales (uint256 _floorPriceInUSD, uint256 _quantityRPTSales, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) public {
         require(seller == msg.sender && balanceOfRpt[seller] >= _quantityRPTSales, "Insufficient tokens to sell!");
         require(_endBlock > _startBlock);
         require(block.number > _startBlock);
@@ -100,7 +100,6 @@ contract Auction is RptToken, TokenSale {
         quantityRPTSales = _quantityRPTSales;
         // If the seller input $145 USD, then the equivalent representation of $145 is 14500 on our smart contract. The front-end must do the conversion and feed 14500 to our smart contract.
         floorPriceInWei = _floorPriceInUSD*usdToWeiRate();
-        return (floorPriceInWei, _quantityRPTSales);
     }
 
     function submitBids() public payable onlyAfterStart onlyBeforeEnd onlyNotCancelled onlyNotSeller returns (bool success) {
