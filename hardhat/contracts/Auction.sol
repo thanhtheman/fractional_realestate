@@ -22,18 +22,18 @@ contract Auction is RptToken, TokenSale {
     event AuctionCancelled();
     event CommissionPaid(address seller, uint256 amount);
     
-    constructor (address _operator, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) {
-        require(_operator == msg.sender);
-        require(_endBlock > _startBlock);
-        require(block.number > _startBlock);
-        require(block.number < _endBlock);
+    constructor () {
+        require(operator == msg.sender);
+        // require(_endBlock > _startBlock);
+        // require(block.number > _startBlock);
+        // require(block.number < _endBlock);
 
         //need to operator to initiate this contract
         // We don't need to assign the operator to be the seller, the seller will be assigned once a customer calls a function
         // seller = _seller;
-        bidIncrement = _bidIncrement;
-        startBlock = _startBlock;
-        endBlock = _endBlock;
+        // bidIncrement = _bidIncrement;
+        // startBlock = _startBlock;
+        // endBlock = _endBlock;
     }
 
     // This modifier ensure that only the seller can do a specific thing such as cancelling the auction.
@@ -87,8 +87,15 @@ contract Auction is RptToken, TokenSale {
     //The Seller can set the floor (minimum) price and the quanity of RPT tokens he wants to sell. Next,
     //He will approve/authorize the operator to transfer his sales tokens. 
 
-    function setFloorPriceAndQuantitySales (uint256 _floorPriceInUSD, uint256 _quantityRPTSales) public payable returns (uint256, uint256) {
+    function setFloorPriceAndQuantitySales (uint256 _floorPriceInUSD, uint256 _quantityRPTSales, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) public payable returns (uint256, uint256) {
         require(seller == msg.sender && balanceOfRpt[seller] >= _quantityRPTSales, "Insufficient tokens to sell!");
+        require(_endBlock > _startBlock);
+        require(block.number > _startBlock);
+        require(block.number < _endBlock);
+
+        bidIncrement = _bidIncrement;
+        startBlock = _startBlock;
+        endBlock = _endBlock;
         approve(_quantityRPTSales);
         quantityRPTSales = _quantityRPTSales;
         // If the seller input $145 USD, then the equivalent representation of $145 is 14500 on our smart contract. The front-end must do the conversion and feed 14500 to our smart contract.

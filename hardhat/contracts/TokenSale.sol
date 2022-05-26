@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: unlicense
 
-// Checklist:
-// 1. SafeMath adn the overflow problem
 pragma solidity ^0.8.7;
 
-import "./PriceConsumerV3.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./RptToken.sol";
 import "hardhat/console.sol";
 
@@ -25,6 +23,7 @@ contract TokenSale is RptToken {
         //fee rate = feeRate BasisPoint / feeRateBase = 1.5% 
         feeRateBase = 10000;
         feeRateBasisPoint = 150;
+        priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
     }
 
     function totalRptSold() public view returns (uint256) {
@@ -48,7 +47,7 @@ contract TokenSale is RptToken {
 
     AggregatorV3Interface internal priceFeed;
     
-    function usdToWeiRate() internal view returns (uint256) {
+    function usdToWeiRate() public view returns (uint256) {
         ( ,int256 usdToEth, , , ) = priceFeed.latestRoundData();
         (uint8 rateDecimals) = priceFeed.decimals();
         uint256 usdToWei = uint256(10**(rateDecimals + basicDecimals() - internalDecimals))/uint256(usdToEth);

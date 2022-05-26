@@ -1,12 +1,11 @@
 import React, {useState} from "react";
 import {ethers} from "ethers";
 import Auction_abi from "./Auction_abi.json";
-import RptToken_abi from "./RptToken_abi.json";
-import TokenSale_abi from "./TokenSale_abi.json";
+
 
 const Auction = () => {
 
-    const contractAddress = "0xdbb067aead7d5b62168031caf8c9cb887f5c9f0b";
+    const contractAddress = "0x818b96022b9646de7d6d5ad43610e0aa09956efc";
     //UI part
     const [errorMessage, setErrorMessage] = useState(null);
     const [defaultAccount, setDefaultAccount] = useState(null);
@@ -15,6 +14,9 @@ const Auction = () => {
     //etherJS part
     // const [currentContractVal, setCurrentContractVl] = useState(null);
     const [incrementBid, setIncrementBid] = useState(null);
+    const [usdToEther, setUsdToEther] = useState(null);
+    const [currentBalance, setCurrentBalance] = useState(null);
+    const [ethBalance, setEthBalance] = useState(null);
     const [provider, setProvider] = useState(null);
     const [signer, setSigner] = useState(null);
     const [contract, setContract] = useState(null);
@@ -49,27 +51,58 @@ const Auction = () => {
         setContract(tempContract);
     }
     
-    const getIncrementBid = async () => {
-        let bid = await contract._totalSupply();
-        bid = (bid/56).toFixed(2);
-        setIncrementBid(bid);
+    const getUsdToEther = async () => {
+        let usdToWeiRate = await contract.usdToWeiRate();
+        const usdToWei = ethers.utils.formatEther(usdToWeiRate);
+        setUsdToEther(usdToWei);
+    }
+
+    const buyRPT = async () => {
+        let transaction = await contract.buyRPT("0x1082b6b58439AAAc58c366380641C8EB2EaBDF7f", 5, { value: ethers.utils.parseEther("0.4") });
+    }
+
+    const checkBalance = async () => {
+        let balance = await contract.balanceOf("0x1082b6b58439AAAc58c366380641C8EB2EaBDF7f");
+        setCurrentBalance(balance);
+    }
+
+    const checkEthBalance = async () => {
+        let eth = await contract.balanceEth("0x6eda30cc59f13c8973f60a167ba4b343c7e2430b");
+        const ethConvert = ethers.utils.formatEther(eth);
+        setEthBalance(ethConvert);
     }
 
     return (
         <div>
-            <h3>{"Interaction with Auction Contract"}</h3>
+            <h3>{"Buy RPT"}</h3>
                 <button onClick={connectWalletHandler}>{connButtonText}</button>
                 <div>
                     <h3>Address: {defaultAccount}</h3>
                 </div>
                 <div>
-                    <button onClick={getIncrementBid}>Show Increment Bid</button>
+                    <button onClick={getUsdToEther}>USD/ETH Exchange Rate</button>
                 </div>
-                <div id="example">
-                    <p id="text">{`$${incrementBid}`}</p>
+                <div>
+                    <p>{`1 USD = ${usdToEther} Ether`}</p>
                 </div>
-                
+                <><button onClick={buyRPT}>Buy RPT</button></>
+                <div>
+                <><button onClick={checkBalance}>Your RPT Balance</button></>
+                <><p>Your current balance is {`${currentBalance}`}</p></>
+                </div>
+                <div>
+                <><button onClick={checkEthBalance}>Your ETH Balance</button></>
+                <><p>Your current balance is {`${ethBalance}`}</p></>
+                </div>
                 {errorMessage}
+
+            <div>
+                <h3>Sell RPT</h3>
+            </div>
+
+
+
+
         </div>
     )
 

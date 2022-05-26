@@ -13,9 +13,9 @@
 //     });
 
 //     it("price feed is working", async function () {
-//         const abc = await PriceConsumerV3Contract.getLatestPrice();
-//         console.log('price:'+ parseInt(abc));
-//         expect(parseInt(abc)).to.be.greaterThan(0);
+//         const result = await PriceConsumerV3Contract.getLatestPrice();
+//         console.log('price:'+ parseInt(result));
+//         expect(parseInt(result)).to.be.greaterThan(0);
 //     });
 
 // })
