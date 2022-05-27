@@ -9,7 +9,7 @@ contract RptToken is ReentrancyGuard, Ownable {
     address public operator;
     string public _name = "Real Property Token";
     string public _symbol = "RPT";
-    uint256 public _totalSupply = 3500;
+    uint256 public _totalSupply = 350;
     uint8 public _decimals = 18;
     uint256 public totalEarnedDividend;
     uint256 public dividendBalance;
@@ -96,8 +96,7 @@ contract RptToken is ReentrancyGuard, Ownable {
     //For reconciliation and accurate record, we created a variable to store this "remaining" wei amount 
     //so that: total received dividend = ditributed dividend + remaining wei.
     //There is still one problem - if we set this function as public, anyone can call it and access to the way we calculate dividend? 
-    function dividendDeposit(uint256 amount) public payable {
-        require(msg.value == amount);
+    function dividendDeposit() public payable {
         remainingWei = msg.value % _totalSupply;
         totalEarnedDividend += ((msg.value - remainingWei)/_totalSupply); 
     }
@@ -109,9 +108,9 @@ contract RptToken is ReentrancyGuard, Ownable {
         return eligibleDividendd;
     }
 
-    function withdrawDividend(uint256 amount) public updateDividendStatus(msg.sender) nonReentrant {
-        require(amount <= balanceOfDividend[msg.sender], "Insufficient balance to withdraw!");
-        balanceOfDividend[msg.sender] -= amount;
+    function withdrawDividend() public updateDividendStatus(msg.sender) nonReentrant {
+        uint256 amount = balanceOfDividend[msg.sender];
+        balanceOfDividend[msg.sender] = 0;
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Dividend transfer failed!");
     }

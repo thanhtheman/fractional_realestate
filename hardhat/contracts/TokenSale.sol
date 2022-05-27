@@ -18,8 +18,8 @@ contract TokenSale is RptToken {
 
     constructor () {
         operator = msg.sender;
-        //Each RET Token is priced at $100, interal USD representation is 10000
-        rptPriceUSD = 10000;
+        //Each RET Token is priced at $5, interal USD representation is 500
+        rptPriceUSD = 500;
         //fee rate = feeRate BasisPoint / feeRateBase = 1.5% 
         feeRateBase = 1000;
         feeRateBasisPoint = 15;
@@ -49,7 +49,7 @@ contract TokenSale is RptToken {
 
     function buyRPT (address client, uint256 quantityRPT) public payable {
 
-        // Making sure the total supply is cap at 3500 
+        // Making sure the total supply is cap at 350 
         // and the operator still have enough RPT Tokens to sell
         require(totalRptSold() + quantityRPT <= totalSupply(), "RPT token cap is at 3500");
         if (quantityRPT > balanceOfRpt[operator])

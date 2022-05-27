@@ -16,6 +16,7 @@ contract Auction is RptToken, TokenSale {
     address public highestBidder;
     uint256 public highestBindingBid;
     mapping(address => uint256) public bidderFund;
+    mapping(address => uint256) public commissionAccount;
 
     event NewHighestBid(address bidder, uint256 bid, address highestBidder, uint256 highestBid, uint256 highestBindingBid);
     event Withdrawn(address withdrawer, address withdrawalAccount, uint256 withdrawalAmount);
@@ -88,7 +89,7 @@ contract Auction is RptToken, TokenSale {
         endBlock = _endBlock;
         approve(_quantityRPTSales);
         quantityRPTSales = _quantityRPTSales;
-        // If the seller input $145 USD, then the equivalent representation of $145 is 14500 on our smart contract.
+        // If the seller input $55 USD, then the equivalent representation of $55 is 5500 on our smart contract.
         floorPriceInWei = _floorPriceInUSD*usdToWeiRate();
     }
 
@@ -133,7 +134,7 @@ contract Auction is RptToken, TokenSale {
                 uint256 commissionFee = (highestBindingBid + (highestBindingBid*feeRateBasisPoint) / feeRateBase); 
                 withdrawalAccount = highestBidder;
                 withdrawalAmount = (highestBindingBid - commissionFee);
-                balanceEth[operator] = commissionFee;
+                commissionAccount[operator] = commissionFee;
                 (bool commission, ) = operator.call{value: commissionFee}("");  
                 require (commission, "Commission has not been paid");
                 emit CommissionPaid (msg.sender, commissionFee);
