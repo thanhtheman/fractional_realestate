@@ -20,6 +20,14 @@ code {
   line-height: 95px;
 }
 
+.header{
+  color: #ff1616;
+}
+
+.step{
+  color: #ecbb63;
+}
+
 #title {
   color: #ecbb63;
   flex-grow: 0;
