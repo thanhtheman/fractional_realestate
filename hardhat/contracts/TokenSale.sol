@@ -58,10 +58,14 @@ contract TokenSale is RptToken {
         // Convert Payment in USD into Wei and check if the client's payment is enough
         // including 1.5% fee
         uint256 usdToWei = usdToWeiRate();
+
         console.log("The exchange rate is %s", usdToWei);
+        
         uint256 paymentInUSD = (rptPriceUSD*quantityRPT) + ((rptPriceUSD*quantityRPT*feeRateBasisPoint) / feeRateBase);
         uint256 weiRequired = paymentInUSD*usdToWei;
+       
         console.log("The wei required is %s", weiRequired);
+       
         require(msg.value >= weiRequired, "Payment is not sufficient!");
         balanceEth[operator] += weiRequired;
         emit TransferEth(client, operator, weiRequired);
@@ -70,8 +74,5 @@ contract TokenSale is RptToken {
         transfer(operator, client, quantityRPT);
         _totalRptSold += quantityRPT;
         
-        // Making sure the new balance is correct
-        console.log("Operato's balance is %s and Acct2's balance is %s", balanceOfRpt[operator], balanceOfRpt[client]);
-        console.log("Total RPT Sold is %s", _totalRptSold);
     }
 }

@@ -24,16 +24,6 @@ contract Auction is RptToken, TokenSale {
     
     constructor () {
         require(operator == msg.sender);
-        // require(_endBlock > _startBlock);
-        // require(block.number > _startBlock);
-        // require(block.number < _endBlock);
-
-        //need to operator to initiate this contract
-        // We don't need to assign the operator to be the seller, the seller will be assigned once a customer calls a function
-        // seller = _seller;
-        // bidIncrement = _bidIncrement;
-        // startBlock = _startBlock;
-        // endBlock = _endBlock;
     }
 
     // This modifier ensure that only the seller can do a specific thing such as cancelling the auction.
@@ -85,7 +75,7 @@ contract Auction is RptToken, TokenSale {
     }
 
     //The Seller can set the floor (minimum) price and the quanity of RPT tokens he wants to sell. Next,
-    //He will approve/authorize the operator to transfer his sales tokens. 
+    //He will approve/authorize the operator to transfer his tokens once the auction is ended. 
 
     function setFloorPriceAndQuantitySales (uint256 _floorPriceInUSD, uint256 _quantityRPTSales, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) public {
         require(seller == msg.sender && balanceOfRpt[seller] >= _quantityRPTSales, "Insufficient tokens to sell!");
@@ -98,7 +88,7 @@ contract Auction is RptToken, TokenSale {
         endBlock = _endBlock;
         approve(_quantityRPTSales);
         quantityRPTSales = _quantityRPTSales;
-        // If the seller input $145 USD, then the equivalent representation of $145 is 14500 on our smart contract. The front-end must do the conversion and feed 14500 to our smart contract.
+        // If the seller input $145 USD, then the equivalent representation of $145 is 14500 on our smart contract.
         floorPriceInWei = _floorPriceInUSD*usdToWeiRate();
     }
 
@@ -131,6 +121,7 @@ contract Auction is RptToken, TokenSale {
             withdrawalAccount = msg.sender;
             withdrawalAmount = bidderFund[msg.sender];
         } else {
+            
             //Once the auction ends, the tokens are trasnferred from the seller to the winner of the auction
             transferFrom(seller, highestBidder, quantityRPTSales); 
             
@@ -173,7 +164,7 @@ contract Auction is RptToken, TokenSale {
 
     //The seller has an option to call this function to cancel the auction. However, he/she will needs to pay a cancellation fee to the operator.
     //The seller will have to pay 1,000,000 GWei for EVERY SINGLE TOKEN that is listed for sales.
-    //Once the auction is , participants can call the withdraw function to get their money back.
+    //If the auction is cancelled , participants can call the withdrawFund() function to get their money back.
     function cancelAuction() private onlySeller onlyBeforeEnd onlyNotCancelled returns (bool _auctionCancelled) {
         uint256 cancellationFee = (quantityRPTSales*1000000);
         (bool cancellation, ) = operator.call{value: cancellationFee}("");  
