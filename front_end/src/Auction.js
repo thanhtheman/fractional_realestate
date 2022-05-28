@@ -11,7 +11,7 @@ import lisa from "./images/Lisa.png";
 
 const Auction = () => {
 
-    const contractAddress = "0xE32229D8cfB8B281942DF864dFB704d0218cD745";
+    const contractAddress = "0x6424Cd7d9f9fB3b2Dbe8416Ec12b6aB3432e4fB8";
     //UI part
     const [errorMessage, setErrorMessage] = useState(null);
     const [defaultAccount, setDefaultAccount] = useState(null);
@@ -118,7 +118,8 @@ const Auction = () => {
     
     const checkDividendBalance = async () => {
         let dividendBalance = await contract.checkDividendBalance(defaultAccount);
-        let dividendBalance1 = ethers.utils.formatUnits(dividendBalance, 0); 
+        let dividendBalance1 = ethers.utils.formatEther(dividendBalance).toString();
+        // let dividend2 = BigNumber.from(dividendBalance).toString(); 
         console.log(dividendBalance1);
         setDividendBalance(dividendBalance1);
     }
@@ -132,32 +133,33 @@ const Auction = () => {
 
     const ethAuctionCalculation = async () => {
         let exchangeRate4 = await contract.usdToWeiRate();
-        let ethAuctionAmountInWei = BigNumber.from(((inputs.numberOfTokenSales*inputs.floorPriceUSD)*exchangeRate4).toString());
+        let ethAuctionAmountInWei = BigNumber.from(((inputs.numberOfTokenSales*inputs.floorPriceUSD*100)*exchangeRate4).toString());
         const ethAuctionAmount = ethers.utils.formatUnits(ethAuctionAmountInWei, 18);
         setEthAuctionAmount(ethAuctionAmount);
     } 
 
     const startAuction = async () => {
-        await contract.setFloorPriceAndQuantitySales(inputs.floorPriceUSD, inputs.numberOfTokenSales, inputs.bidIncrementUSD, 10751710, 70751722);
+        await contract.setFloorPriceAndQuantitySales(inputs.floorPriceUSD, inputs.numberOfTokenSales, inputs.bidIncrementUSD, "10752708", "10752728");
     }
 
     const submitBid = async () => {
-        let exchangeRate5 = await contract.usdToWeiRate();
-        let bidPriceInWei = BigNumber.from((inputs.bidPriceUSD*exchangeRate5).toString());
-        const bidPriceInEther = ethers.utils.formatUnits(bidPriceInWei, 18);
-        await contract.submitBids({value:ethers.utils.parseUnits(bidPriceInEther).toString()});
+        // let exchangeRate5 = await contract.usdToWeiRate();
+        // let bidPriceInWei = BigNumber.from((inputs.bidPriceUSD*100*exchangeRate5).toString());
+        // const bidPriceInEther = ethers.utils.formatUnits(bidPriceInWei, 18);
+        console.log(ethBidAmount);
+        await contract.submitBids({value: ethers.utils.parseUnits(ethBidAmount).toString()});
     }
 
     const convertBidAmount = async () => {
         let exchangeRate6 = await contract.usdToWeiRate();
-        let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*exchangeRate6).toString());
+        let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*100*exchangeRate6).toString());
         const ethBidAmount = ethers.utils.formatUnits(ethBidAmountInWei, 18);
         setBidAmount(ethBidAmount);
     }
     
     const convertFloorPriceToWei = async () => {
         let exchangeRate7 = await contract.usdToWeiRate();
-        let ethFloorPriceInWei = BigNumber.from((inputs.floorPriceUSD*exchangeRate7).toString());
+        let ethFloorPriceInWei = BigNumber.from((inputs.floorPriceUSD*100*inputs.numberOfTokenSales*exchangeRate7).toString());
         const ethFloorPrice = ethers.utils.formatUnits(ethFloorPriceInWei, 18);
         setEthFloorPrice(ethFloorPrice);
     } 
@@ -223,7 +225,7 @@ const Auction = () => {
                     <img src={john} id="john" ></img>
                 </div>
                 <div class="container__feature3">
-                    <h2 id="para3"> "Dave, that's cool. I want to buy 5 tokens!"</h2>
+                    <h2 id="para3"> "Dave, that's cool. I want to buy 200 tokens!"</h2>
                 </div>
             </div>
 
@@ -409,7 +411,7 @@ const Auction = () => {
                 <p>{`1 USD = ${usdToEther} Ether`}</p>
                 <p>At the exchange rate above, click to find out your minimum asking price</p>
                 <button className="btn" onClick={ethAuctionCalculation}>ETH Convert</button>
-                <h3>{`You are asking ${ethAuctionAmount} ETH for ${inputs.numberOfTokenSale}`}</h3>
+                <h3>{`You are asking ${ethAuctionAmount} ETH for ${inputs.numberOfTokenSales}`}</h3>
                 <p>If everything looks good, you can star the 3-minute auction!<br></br>
                 Please keep track of your clock and Check your wallet balance once the auction ends!</p>
                 <button className="btn" onClick={startAuction}>Start Auction</button>
@@ -430,6 +432,7 @@ const Auction = () => {
                         <label>Your Best Bid (USD)</label>
                         <br></br>
                         <input type="number" name="bidPriceUSD" value={inputs.bidPriceUSD} onChange ={handleChange}/>
+                        <input type="submit"/>
                         <br></br>
                     </form>
                 </div>

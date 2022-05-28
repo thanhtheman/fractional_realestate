@@ -9,7 +9,7 @@ contract RptToken is ReentrancyGuard, Ownable {
     address public operator;
     string public _name = "Real Property Token";
     string public _symbol = "RPT";
-    uint256 public _totalSupply = 350;
+    uint256 public _totalSupply = 3500;
     uint8 public _decimals = 18;
     uint256 public totalEarnedDividend;
     uint256 public dividendBalance;
