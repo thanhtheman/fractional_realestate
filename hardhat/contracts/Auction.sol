@@ -96,7 +96,7 @@ contract Auction is RptToken, TokenSale {
     function submitBids() public payable onlyAfterStart onlyBeforeEnd onlyNotCancelled onlyNotSeller returns (bool success) {
         require(msg.value >= floorPriceInWei, "Insufficient funds to bid!");
         uint256 newBid = bidderFund[msg.sender] + msg.value;
-        require (newBid >= highestBindingBid); //do we need to revert the previous transaction?
+        require (newBid >= highestBindingBid);
         uint256 highestBid = bidderFund[highestBidder];
         bidderFund[msg.sender] = newBid;
         if (newBid <= highestBid) {

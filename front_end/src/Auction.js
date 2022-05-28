@@ -104,7 +104,7 @@ const Auction = () => {
 
     
 
-    //Jenny deposited her monthly rent of $1500, which will be converted to wei
+    //Jenny deposited her monthly rent of $750, which will be converted to wei
     //and send to the contract
     const dividendDeposit = async () => {
         let exchangeRate2 = await contract.usdToWeiRate();

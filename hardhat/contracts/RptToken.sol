@@ -59,9 +59,9 @@ contract RptToken is ReentrancyGuard, Ownable {
         _;
     }
 
-    // With the private visibility, Tthe mint function is only called once in the constructor
+    // With the private visibility, The mint function is only called once in the constructor
     // EOA can't call it AND it will never be called at anywhere else in this contract
-    // to cap the total supply of 3500 tokens.
+    // to cap the total supply of 350 tokens.
     function mint(address account, uint256 amount) private {  
         balanceOfRpt[account] += amount;
     }
