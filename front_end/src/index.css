@@ -115,6 +115,11 @@ code {
   margin: 15px;
 }
 
+#explain {
+  font-style: italic;
+  color:blue;
+}
+
 .btn {
   background: #ffffff;
   background-image: -webkit-linear-gradient(top, #ffffff, #ffffff);

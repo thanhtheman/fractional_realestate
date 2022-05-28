@@ -84,7 +84,7 @@ contract Auction is RptToken, TokenSale {
         require(block.number > _startBlock);
         require(block.number < _endBlock);
 
-        bidIncrement = _bidIncrement;
+        bidIncrement = _bidIncrement*usdToWeiRate();
         startBlock = _startBlock;
         endBlock = _endBlock;
         approve(_quantityRPTSales);
