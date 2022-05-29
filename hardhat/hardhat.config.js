@@ -18,8 +18,8 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 
 //please input your own keys
-const ALCHEMY_API_KEY = "8n2PzOqhXxu-SKO4-0cNZaVa5QoB9zFx";
-const RINKEBY_PRIVATE_KEY = "8dba54aeab960f36d7d6dfb08527c6dc163e73e2d6e7810c539033c65d5c3720";
+const ALCHEMY_API_KEY = "";
+const RINKEBY_PRIVATE_KEY = "";
 
 module.exports = {
   defaultNetwork: "rinkeby",
