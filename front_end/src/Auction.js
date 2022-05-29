@@ -152,7 +152,7 @@ const Auction = () => {
 
     const convertBidAmount = async () => {
         let exchangeRate6 = await contract.usdToWeiRate();
-        let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*100*exchangeRate6).toString());
+        let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*100*inputs.numberOfTokenSales*exchangeRate6).toString());
         const ethBidAmount = ethers.utils.formatUnits(ethBidAmountInWei, 18);
         setBidAmount(ethBidAmount);
     }
