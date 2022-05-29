@@ -139,7 +139,15 @@ const Auction = () => {
     } 
 
     const startAuction = async () => {
-        await contract.setFloorPriceAndQuantitySales(inputs.floorPriceUSD, inputs.numberOfTokenSales, inputs.bidIncrementUSD, "10752708", "10752728");
+        let _floorPriceUSD = (inputs.floorPriceUSD*100);
+        let _bidIncrementUSD = (inputs.bidIncrementUSD*100);
+        await contract.setFloorPriceAndQuantitySales(_floorPriceUSD, inputs.numberOfTokenSales, _bidIncrementUSD, "10761594", "10761616");
+        let _startBlock = await contract.startBlock();
+        let _endBlock = await contract.endBlock();
+        let _quantityRPTSales = await contract.quantityRPTSales();
+        console.log(_startBlock);
+        console.log(_endBlock);
+        console.log(_quantityRPTSales);
     }
 
     const submitBid = async () => {
@@ -152,7 +160,7 @@ const Auction = () => {
 
     const convertBidAmount = async () => {
         let exchangeRate6 = await contract.usdToWeiRate();
-        let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*100*exchangeRate6).toString());
+        let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*100*inputs.numberOfTokenSales*exchangeRate6).toString());
         const ethBidAmount = ethers.utils.formatUnits(ethBidAmountInWei, 18);
         setBidAmount(ethBidAmount);
     }
