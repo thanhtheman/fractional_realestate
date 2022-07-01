@@ -18,8 +18,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 
 //please input your own keys
-const ALCHEMY_API_KEY = "";
-const RINKEBY_PRIVATE_KEY = "";
+const ALCHEMY_API_KEY = "8n2PzOqhXxu-SKO4-0cNZaVa5QoB9zFx";
+// This one is on Goerli network
+const ALCHEMY_API_KEY_GOERLI = "8QDtBlNmkO9275k2IXcxOnwHNol6aMrP";
+const RINKEBY_PRIVATE_KEY = "8dba54aeab960f36d7d6dfb08527c6dc163e73e2d6e7810c539033c65d5c3720";
 
 module.exports = {
   defaultNetwork: "rinkeby",
@@ -27,6 +29,10 @@ module.exports = {
   networks: {
     rinkeby: {
       url:`https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+      accounts:[`${RINKEBY_PRIVATE_KEY}`]
+    },
+    goerli: {
+      url:`https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY_GOERLI}`,
       accounts:[`${RINKEBY_PRIVATE_KEY}`]
     }
   }

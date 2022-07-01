@@ -52,13 +52,13 @@ contract Auction is RptToken, TokenSale {
 
     // This is the condition for the contract to accept bids. You can't bid if the auction is cancelled.
     modifier onlyNotCancelled {
-        require(cancelled = false);
+        require(cancelled == false);
         _;
     }
 
     // This is the condition for all participants, including the seller, to withdraw their funds, only once the auction is ended OR cancelled.
     modifier onlyEndedOrCancelled {
-        require(block.number > endBlock || cancelled);
+        require(block.number > endBlock || cancelled == true);
         _;
     }
 
@@ -79,7 +79,8 @@ contract Auction is RptToken, TokenSale {
     //He will approve/authorize the operator to transfer his tokens once the auction is ended. 
 
     function setFloorPriceAndQuantitySales (uint256 _floorPriceInUSD, uint256 _quantityRPTSales, uint256 _bidIncrement, uint256 _startBlock, uint256 _endBlock) public {
-        require(seller == msg.sender && balanceOfRpt[seller] >= _quantityRPTSales, "Insufficient tokens to sell!");
+        seller = msg.sender;
+        require(balanceOfRpt[seller] >= _quantityRPTSales, "Insufficient tokens to sell!");
         require(_endBlock > _startBlock);
         require(block.number > _startBlock);
         require(block.number < _endBlock);
@@ -93,7 +94,7 @@ contract Auction is RptToken, TokenSale {
         floorPriceInWei = _floorPriceInUSD*usdToWeiRate();
     }
 
-    function submitBids() public payable onlyAfterStart onlyBeforeEnd onlyNotCancelled onlyNotSeller returns (bool success) {
+    function submitBids() public payable onlyNotSeller onlyNotCancelled onlyAfterStart onlyBeforeEnd  returns (bool success) {
         require(msg.value >= floorPriceInWei, "Insufficient funds to bid!");
         uint256 newBid = bidderFund[msg.sender] + msg.value;
         require (newBid >= highestBindingBid);
@@ -122,16 +123,12 @@ contract Auction is RptToken, TokenSale {
             withdrawalAccount = msg.sender;
             withdrawalAmount = bidderFund[msg.sender];
         } else {
-            
-            //Once the auction ends, the tokens are trasnferred from the seller to the winner of the auction
-            transferFrom(seller, highestBidder, quantityRPTSales); 
-            
             // This is what will happen when the seller withdraws his/her money,
             // The seller pays the operator a commission fee.
             // Commission fee is 1.5% of the sale price, which is the highestBindingBid.
             // Regarding the highest bidder, he/she will be able to withdraw the diffference = highestBid - highestBindingBid
             if (msg.sender == seller) {
-                uint256 commissionFee = (highestBindingBid + (highestBindingBid*feeRateBasisPoint) / feeRateBase); 
+                uint256 commissionFee = (highestBindingBid*feeRateBasisPoint) / feeRateBase; 
                 withdrawalAccount = highestBidder;
                 withdrawalAmount = (highestBindingBid - commissionFee);
                 commissionAccount[operator] = commissionFee;
@@ -141,6 +138,8 @@ contract Auction is RptToken, TokenSale {
                 sellerWithdrawn = true;
             } else if (msg.sender == highestBidder) {
                 withdrawalAccount = highestBidder;
+                //Once the auction ends, the tokens are trasnferred from the seller to the winner of the auction
+                transferFrom(seller, highestBidder, quantityRPTSales); 
                 if (sellerWithdrawn) {
                     withdrawalAmount = bidderFund[highestBidder];
                 } else {

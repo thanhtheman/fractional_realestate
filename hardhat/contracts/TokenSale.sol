@@ -10,8 +10,8 @@ contract TokenSale is RptToken {
     uint256 public rptPriceUSD;
     uint256 public _totalRptSold;
     uint8 public internalDecimals = 2;
-    uint256 feeRateBase;
-    uint8 feeRateBasisPoint;
+    uint256 public feeRateBase;
+    uint8 public feeRateBasisPoint;
     mapping(address => uint256) public balanceEth;
     event TransferEth (address from, address to, uint256 amount);
 
