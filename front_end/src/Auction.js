@@ -11,7 +11,24 @@ import lisa from "./images/Lisa.png";
 
 const Auction = () => {
 
-    const contractAddress = "0x6424Cd7d9f9fB3b2Dbe8416Ec12b6aB3432e4fB8";
+    // const contractAddress = "0x6424Cd7d9f9fB3b2Dbe8416Ec12b6aB3432e4fB8"; old version
+    // const contractAddress = "0xF0e996f97e69972f160b7Dd67D883174201F5848";
+    // const contractAddress = "0x35f6c4f2f1980E6B54769bE89Ca6743Bf8d60496";
+    // const contractAddress = "0xF87bEd4B46756D3e9bf573605e5Bb92f68392351";
+    // const contractAddress = "0xB40463888618Bde856a687110cc11b8C9f3761DE";
+    // const contractAddress = "0x64083a66ee28239F1222b2930ee7761CdC0C6900";
+    // const contractAddress = "0x23619aff552d0D29112CF34A7B934002016D2D74";
+    // const contractAddress = "0x40F64884314Dd864c6385e433EF4528e2164f43d";
+    // const contractAddress = "0x4AE75a998583b705753527991adF7F5FdA39dFF6";
+    // const contractAddress = "0xcDb9915082Ac18CFA98bB98682628388Aa777F30";
+    // const contractAddress = "0x52CbD6831FAD4859100276f14351A9b559b05aDD";
+    // const contractAddress = "0x2a300Ee6AB7F8Fa705eED664a9D83e3Af3B92bdF";
+    // const contractAddress = "0xD582c2C8Ac139F8a4388B49539a3BcdAEacced53";
+    
+    const contractAddress = "0x6561cCE1a045858Af95087A05F7EcF66EcF6f021";
+    //Contract deployed on Goerli
+    // const contractAddress = "0x6aF6a07781BD90959e3593fDFBE130c91c981176";
+    
     //UI part
     const [errorMessage, setErrorMessage] = useState(null);
     const [defaultAccount, setDefaultAccount] = useState(null);
@@ -117,9 +134,10 @@ const Auction = () => {
 
     
     const checkDividendBalance = async () => {
-        let dividendBalance = await contract.checkDividendBalance(defaultAccount);
-        let dividendBalance1 = ethers.utils.formatEther(dividendBalance).toString();
-        // let dividend2 = BigNumber.from(dividendBalance).toString(); 
+        await contract.checkDividendBalance(defaultAccount);
+        // let dividendBalance1 = ethers.utils.formatEther(dividendBalance).toString();
+        let dividendBalance2 = await contract.balanceOfDividend(defaultAccount);
+        let dividendBalance1 = BigNumber.from(dividendBalance2).toString(); 
         console.log(dividendBalance1);
         setDividendBalance(dividendBalance1);
     }
@@ -139,43 +157,93 @@ const Auction = () => {
     } 
 
     const startAuction = async () => {
-        let _floorPriceUSD = (inputs.floorPriceUSD*100);
+        let _floorPriceUSD = (inputs.floorPriceUSD*100*inputs.numberOfTokenSales);
         let _bidIncrementUSD = (inputs.bidIncrementUSD*100);
-        await contract.setFloorPriceAndQuantitySales(_floorPriceUSD, inputs.numberOfTokenSales, _bidIncrementUSD, "10761594", "10761616");
-        let _startBlock = await contract.startBlock();
-        let _endBlock = await contract.endBlock();
-        let _quantityRPTSales = await contract.quantityRPTSales();
-        console.log(_startBlock);
-        console.log(_endBlock);
-        console.log(_quantityRPTSales);
+        await contract.setFloorPriceAndQuantitySales(_floorPriceUSD, inputs.numberOfTokenSales, _bidIncrementUSD, 10790017, 10790027);
+
+    }
+
+    const checkEndBlock = async () => {
+        let _checkEndBlock = await contract.endBlock();
+        console.log(BigNumber.from(_checkEndBlock).toString());
+    }
+
+    const checkCancel = async () => {
+        let _checkCancel = await contract.cancelled();
+        console.log(_checkCancel.toString());
+    }
+
+
+    const whoIsSeller = async () => {
+        let _seller = await contract.seller();
+        console.log(_seller.toString());
     }
 
     const submitBid = async () => {
-        // let exchangeRate5 = await contract.usdToWeiRate();
-        // let bidPriceInWei = BigNumber.from((inputs.bidPriceUSD*100*exchangeRate5).toString());
-        // const bidPriceInEther = ethers.utils.formatUnits(bidPriceInWei, 18);
-        console.log(ethBidAmount);
-        await contract.submitBids({value: ethers.utils.parseUnits(ethBidAmount).toString()});
+        let exchangeRate7 = await contract.usdToWeiRate();
+        let quantityTokenSales2 = await contract.quantityRPTSales()
+        let rawNumber = inputs.bidPriceUSD*100*quantityTokenSales2*exchangeRate7;
+        console.log(rawNumber);
+        await contract.submitBids({ value: rawNumber.toString() });
     }
 
     const convertBidAmount = async () => {
         let exchangeRate6 = await contract.usdToWeiRate();
-        let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*100*inputs.numberOfTokenSales*exchangeRate6).toString());
+        let quantityTokenSales2 = await contract.quantityRPTSales();
+        let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*100*quantityTokenSales2*exchangeRate6).toString());
         const ethBidAmount = ethers.utils.formatUnits(ethBidAmountInWei, 18);
         setBidAmount(ethBidAmount);
     }
     
     const convertFloorPriceToWei = async () => {
-        let exchangeRate7 = await contract.usdToWeiRate();
-        let ethFloorPriceInWei = BigNumber.from((inputs.floorPriceUSD*100*inputs.numberOfTokenSales*exchangeRate7).toString());
-        const ethFloorPrice = ethers.utils.formatUnits(ethFloorPriceInWei, 18);
+        let price1 = await contract.floorPriceInWei();
+        let price2 = BigNumber.from((price1).toString());
+        const ethFloorPrice = ethers.utils.formatUnits(price2, 18);
         setEthFloorPrice(ethFloorPrice);
     } 
 
 
     const withdrawMoney = async () => {
-        await contract.witdrawFund();
+        await contract.withdrawFund();
     }
+
+
+    const checkFloorPrice = async () => {
+        let price = await contract.floorPriceInWei();
+        console.log((ethers.utils.formatUnits(price, 0)).toString());
+    }
+
+    const bidIncrement = async () => {
+       let increment =  await contract.bidIncrement();
+        console.log(increment.toString());
+    }
+
+    const highestBindingBid = async () => {
+        let increment =  await contract.highestBindingBid();
+         console.log(increment.toString());
+     }
+
+     const lisa1 = async () => {
+        let lisaMoney =  await contract.bidderFund("0x1082b6b58439AAAc58c366380641C8EB2EaBDF7f");
+         console.log(lisaMoney.toString());
+     }
+
+     const dave1 = async () => {
+        let daveMoney =  await contract.bidderFund("0x6edA30CC59F13c8973F60a167ba4b343C7E2430b");
+         console.log(daveMoney.toString());
+     }
+
+     
+     const operatorDave = async () => {
+        let operatorAddress =  await contract.operator();
+        let commission = await contract.commissionAccount(operatorAddress);
+         console.log(commission.toString());
+     }
+
+     const highestBidder = async () => {
+        let bidder =  await contract.highestBidder();
+         console.log(bidder);
+     }
 
 
     //Basic functions to check balance, the ethBalance is for the operator only
@@ -201,8 +269,8 @@ const Auction = () => {
             </div>
 
             
-            <div class="container"> 
-                <div class="container__diagonal"></div>
+            <div className="container"> 
+                <div className="container__diagonal"></div>
                     <img src={john} id="john" ></img>
                     <img src={condo} id="condo" ></img>
                     <h2> This is John, he walked by a building and thought "Um... I wish I could own a piece of it...".<br></br> 
@@ -210,12 +278,12 @@ const Auction = () => {
                     I wish I could use my ETH to buy a small piece of this property and get some passive income from it.</h2>
             </div>
             
-            <div class="container2">
+            <div className="container2">
 
-                <div class="container__image">
+                <div className="container__image">
                     <img src={dave} id="dave" ></img>
                 </div>
-                <div class="container__feature">
+                <div className="container__feature">
                     <h2 id="para2"> "Hey John, this is Dave - the DeFi Devil real estate investor.<br></br>
                         I just "tokenized" the property (Token Name: RPT)<br></br>
                         Total supply is 350 tokens at $5 each, that's our downpayment $1750 to buy the property!<br></br> 
@@ -227,12 +295,12 @@ const Auction = () => {
             
             <br></br>
             
-            <div class="container3">
+            <div className="container3">
 
-                <div class="container__image3">
+                <div className="container__image3">
                     <img src={john} id="john" ></img>
                 </div>
-                <div class="container__feature3">
+                <div className="container__feature3">
                     <h2 id="para3"> "Dave, that's cool. I want to buy 200 tokens!"</h2>
                 </div>
             </div>
@@ -290,11 +358,11 @@ const Auction = () => {
                 {errorMessage}
 
             
-            <div class="container2">
-                <div class="container__image">
+            <div className="container2">
+                <div className="container__image">
                     <img src={dave} id="dave" ></img>
                 </div>
-                <div class="container__feature">
+                <div className="container__feature">
                     <h2 id="para2"> "Hey John, thanks for buying in. As a token of apperciation,
                     <br></br>I will "gift" (or airdrop) you another 5 tokens.
                     Just simply click the button below to get them!<br></br>
@@ -305,60 +373,59 @@ const Auction = () => {
             <button className="btn"onClick={transfer}>Get 5 Tokens!</button>
             <br></br>
             <h1 className="header">Section#2 How To Receive Dividend - Monthly Rent</h1>
-            <div class="container2">
-                <div class="container__image">
+            <div className="container2">
+                <div className="container__image">
                     <img src={dave} id="dave" ></img>
                 </div>
-                <div class="container__feature">
+                <div className="container__feature">
                     <h2 id="para2"> "Alright John, many moons have passed since Jenny moved in<br></br>
                     It's time to get your monthly dividend from Jenny's rent, it's $750 after all expenses.</h2>
                 </div>
             </div>
 
 
-            <div class="container3">
-                <div class="container__image3">
+            <div className="container3">
+                <div className="container__image3">
                     <img src={jenny}></img>
                 </div>
-                <div class="container__feature3">
+                <div className="container__feature3">
                     <h2 id="para3"> "Hey, I just paid my rent by ETH on your platform."</h2>
                 </div>
             </div>
 
             <button className="btn"onClick={dividendDeposit}>Deposit rent to our smart contract!</button>
             
-            <div class="container2">
-                <div class="container__image">
+            <div className="container2">
+                <div className="container__image">
                     <img src={dave} id="dave" ></img>
                 </div>
-                <div class="container__feature">
+                <div className="container__feature">
                     <h2 id="para2"> "John, now you can check your dividence balance.<br></br>
                     Then hit the "withdraw" button and get your money!</h2>
                 </div>
             </div>
             <br></br>
             <button className="btn"onClick={checkDividendBalance}>Check Your Dividend Balance</button>
-            <p>Your current balance is {`${dividendBalance1}`}</p>
+            <p>Your current balance is {`${dividendBalance1} Wei, 1 Ether = 10^18 Wei.`}</p>
             <br></br>
             <button className="btn"onClick={withdrawDividend}>Withdraw My Dividend</button>
-            <space></space>
             <p></p>
             <br></br>
-            <div class="container3">
-                <div class="container__image3">
+            <div className="container3">
+                <div className="container__image3">
                     <img src={john}></img>
                 </div>
-                <div class="container__feature3">
+                <div className="container__feature3">
                     <h2 id="para3"> "Alright, this is so cool. But I now want to sell some tokens <br></br>
                     because I need money and some people want to buy my tokens."</h2>
                 </div>
             </div>
 
-            <div class="container2">
-                <div class="container__image">
+            <div className="container2">
+                <div className="container__image">
                     <img src={dave} id="dave" ></img>
                 </div>
-                <div class="container__feature">
+                <div className="container__feature">
                     <h2 id="para2"> "Not a problem, you can put your tokens on the auction<br></br>
                     So people can bid and you get the best price! Just fill out the form below.</h2>
                 </div>
@@ -370,11 +437,11 @@ const Auction = () => {
             <h3 id="explain">Here at RPT, we run English Auction style. Each auction will last about 3 minutes so that people can submit bids. <br></br>
             Just let us know the minium price and how many tokens you want to sell and your incremental bid!</h3>
             <br></br>
-            <div class="container3">
-                <div class="container__image3">
+            <div className="container3">
+                <div className="container__image3">
                     <img src={john}></img>
                 </div>
-                <div class="container__feature3">
+                <div className="container__feature3">
                     <h2 id="para3"> "Alright, price and quantity, I got it. But what is incremental bid?"</h2>
                 </div>
             </div>
@@ -423,6 +490,11 @@ const Auction = () => {
                 <p>If everything looks good, you can star the 3-minute auction!<br></br>
                 Please keep track of your clock and Check your wallet balance once the auction ends!</p>
                 <button className="btn" onClick={startAuction}>Start Auction</button>
+                <button className="btn" onClick={whoIsSeller}>who is seller</button>
+                <button className="btn" onClick={checkFloorPrice}>Floor Price</button>
+                <button className="btn" onClick={bidIncrement}>Bid Increment</button>
+                <button className="btn" onClick={highestBindingBid}>Highest Binding Bid</button>
+                <button className="btn" onClick={highestBidder}>Highest Bidder</button>
             </div>
 
 
@@ -437,7 +509,7 @@ const Auction = () => {
                 <p>Please fill out the form and hit "Submit" to log in your bid:</p>
                 <div>
                     <form onSubmit={handleSubmit}>
-                        <label>Your Best Bid (USD)</label>
+                        <label>Your Best Bid per Token (USD)</label>
                         <br></br>
                         <input type="number" name="bidPriceUSD" value={inputs.bidPriceUSD} onChange ={handleChange}/>
                         <input type="submit"/>
@@ -462,36 +534,38 @@ const Auction = () => {
 
                 <br></br>
                 <button className="btn" onClick={submitBid}>Submit</button>
+                <button className="btn" onClick={checkEndBlock}>end block</button>
+                <button className="btn" onClick={checkCancel}>cancelled?</button>
             </div>
 
             <div>
                 <h2 className="step">List of Bidders</h2>
                 <p>For demo purposes only, this is list of bidders and their bid</p>
                 <br></br>
-                <div class="container3">
-                    <div class="container__image3">
+                <div className="container3">
+                    <div className="container__image3">
                         <img src={dave}></img>
                     </div>
-                    <div class="container__feature3">
+                    <div className="container__feature3">
                         <h2 id="para3"> Dave <br></br>
                         "I want to buy back my tokens. I bid $900 ($9 x 100 tokens)"</h2>
                     </div>
                 </div>
-                <div class="container3">
-                    <div class="container__image3">
+                <div className="container3">
+                    <div className="container__image3">
                         <img src={jenny}></img>
                     </div>
-                    <div class="container__feature3">
+                    <div className="container__feature3">
                         <h2 id="para3"> Jenny <br></br>
                         "I want to own the tokens of the place I rent. <br></br> 
                         I bid for $1200 ($12 x 100 tokens)"</h2>
                     </div>
                 </div>
-                <div class="container3">
-                    <div class="container__image3">
+                <div className="container3">
+                    <div className="container__image3">
                         <img src={lisa}></img>
                     </div>
-                    <div class="container__feature3">
+                    <div className="container__feature3">
                         <h2 id="para3"> Lisa
                         <br></br> "I want to invest, <br></br> 
                         I bid for $1500 ($15 x 100 tokens)"</h2>
@@ -503,6 +577,9 @@ const Auction = () => {
                 <h2 className="step">Step 3 - Withdraw Your Money</h2>
                 <p> The auction is now over, everybody can get your money back. Just click on the button</p>
                 <button className="btn" onClick={withdrawMoney}>Get Your Money Back</button>
+                <button className="btn" onClick={lisa1}>Lisa Money</button>
+                <button className="btn" onClick={dave1}>Dave Money</button>
+                <button className="btn" onClick={operatorDave}>Operator Dave Fee</button>
                 
                 <h2 id="explain">This is the summary of what happened:</h2>
                 <h2>Lisa is the winner, she paid $1210 and she should have 100 tokens on her balance<br></br>
