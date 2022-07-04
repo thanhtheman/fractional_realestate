@@ -55,8 +55,8 @@
 .app__header-badge {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
   
     .badge-cmp {
@@ -94,12 +94,12 @@
     position: relative;
   
     img {
-      width: 100%;
+      width: 80%;
       object-fit: contain;
       z-index: 1;
     }
   
-    .overlay_circle {
+    .overlay_house {
       position: absolute;
       left: 0;
       right: 0;
