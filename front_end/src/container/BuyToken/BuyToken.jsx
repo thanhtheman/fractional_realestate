@@ -2,9 +2,9 @@ import {useState, React} from 'react';
 import { AppWrap, MotionWrap } from '../../Wrapper';
 import {motion} from 'framer-motion';
 import { images } from '../../constants';
-import './BuyToken.scss';
 import {BigNumber, ethers} from "ethers";
 import Auction_abi from "../../Auction_abi.json";
+import './BuyToken.scss';
 
 const Buytoken = () => {
 
@@ -22,36 +22,12 @@ const Buytoken = () => {
    //For the form
    const [inputs, setInputs] = useState({});
    const [ethAmount, setEthAmount] = useState(null);
-   const [ethAuctionAmount, setEthAuctionAmount] = useState(null);
-   const [ethBidAmount, setBidAmount] = useState(null);
-   const [ethFloorPrice, setEthFloorPrice] = useState(null);
 
   //etherJS part
-  const [incrementBid, setIncrementBid] = useState(null);
   const [usdToEther, setUsdToEther] = useState(null);
   const [currentBalance, setCurrentBalance] = useState(null);
-  const [ethBalance, setEthBalance] = useState(null);
 
-  //USD to ETH exchange rate, provided by Chainlink Live Data Feed
-  const getUsdToEther = async () => {
-    let usdToWeiRate = await contract.usdToWeiRate();
-    const usdToEther = ethers.utils.formatEther(usdToWeiRate);
-    setUsdToEther(usdToEther);
-    ethCalculation();
-  }
-
-//Calculating the amoutn of Eth/Wei that the investor needs to send, including 1.5% fees.
-  //We have to input the fee at 2%, which is 0.5% higher, to avoid "Error: can't estimate gas" problem from MetaMask
-  const ethCalculation = async () => {
-      let exchangeRate1 = await contract.usdToWeiRate();
-      let ethAmountInWei = BigNumber.from(((inputs.numberOfTokens*500*1.02)*exchangeRate1).toString());
-      const ethAmount = ethers.utils.formatUnits(ethAmountInWei, 18);
-      setEthAmount(ethAmount);
-  } 
-
-  const buyRPT = async () => {
-      await contract.buyRPT(defaultAccount, inputs.numberOfTokens, { value: ethers.utils.parseUnits(ethAmount).toString() });
-  }
+  //Connect Wallet
 
   const connectWalletHandler = () => {
     if(window.ethereum) {
@@ -81,6 +57,7 @@ const Buytoken = () => {
     setContract(tempContract);
   }
 
+  // Hanlding the forms
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -90,6 +67,31 @@ const Buytoken = () => {
     event.preventDefault();
     console.log(inputs);
     getUsdToEther();
+  }
+
+  //USD to ETH exchange rate, provided by Chainlink Live Data Feed
+  const getUsdToEther = async () => {
+    let usdToWeiRate = await contract.usdToWeiRate();
+    const usdToEther = ethers.utils.formatEther(usdToWeiRate);
+    setUsdToEther(usdToEther);
+    ethCalculation();
+  }
+
+//Calculating the amoutn of Eth/Wei that the investor needs to send, including 1.5% fees.
+//We have to input the fee at 2%, which is 0.5% higher, to avoid "Error: can't estimate gas" problem from MetaMask
+  const ethCalculation = async () => {
+      let exchangeRate1 = await contract.usdToWeiRate();
+      let ethAmountInWei = BigNumber.from(((inputs.numberOfTokens*500*1.02)*exchangeRate1).toString());
+      const ethAmount = ethers.utils.formatUnits(ethAmountInWei, 18);
+      setEthAmount(ethAmount);
+  } 
+
+  const buyRPT = async () => {
+      await contract.buyRPT(defaultAccount, inputs.numberOfTokens, { value: ethers.utils.parseUnits(ethAmount).toString() });
+  }
+  const checkBalance = async () => {
+    let balance = await contract.balanceOf(defaultAccount);
+    setCurrentBalance(balance);
   }
 
   return (
@@ -116,6 +118,8 @@ const Buytoken = () => {
                     <p>"I want to buy 100 tokens."</p>
                   </div>
                 </div>
+                <button className="button" onClick={checkBalance}>Your RPT Balance</button>
+                <p>You have {`${currentBalance}`} RPT tokens!</p>
               </div>
           </motion.div>
         </div>
