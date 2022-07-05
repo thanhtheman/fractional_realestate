@@ -33,16 +33,9 @@ const Auction = () => {
     const [errorMessage, setErrorMessage] = useState(null);
     const [defaultAccount, setDefaultAccount] = useState(null);
     const [connButtonText, setConnButtonText] = useState("Connect Wallet");
-
-    //etherJS part
-    const [incrementBid, setIncrementBid] = useState(null);
-    const [usdToEther, setUsdToEther] = useState(null);
-    const [currentBalance, setCurrentBalance] = useState(null);
-    const [ethBalance, setEthBalance] = useState(null);
     const [provider, setProvider] = useState(null);
     const [signer, setSigner] = useState(null);
-    const [contract, setContract] = useState(null);
-    const [dividendBalance1, setDividendBalance] = useState(null);
+
 
     //For the form
     const [inputs, setInputs] = useState({});
@@ -50,6 +43,17 @@ const Auction = () => {
     const [ethAuctionAmount, setEthAuctionAmount] = useState(null);
     const [ethBidAmount, setBidAmount] = useState(null);
     const [ethFloorPrice, setEthFloorPrice] = useState(null);
+    
+    //etherJS part
+    const [incrementBid, setIncrementBid] = useState(null);
+    const [usdToEther, setUsdToEther] = useState(null);
+    const [currentBalance, setCurrentBalance] = useState(null);
+    const [ethBalance, setEthBalance] = useState(null);
+
+    const [contract, setContract] = useState(null);
+    const [dividendBalance1, setDividendBalance] = useState(null);
+
+
   
 
     //Basic account, signer setup
