@@ -8,7 +8,7 @@ import Auction_abi from "../../Auction_abi.json";
 
 const Buytoken = () => {
 
-  const contractAddress = process.env.contract_address;
+  const contractAddress = '0x6561cCE1a045858Af95087A05F7EcF66EcF6f021';
 
   //UI part
   const [errorMessage, setErrorMessage] = useState(null);
@@ -37,11 +37,12 @@ const Buytoken = () => {
     let usdToWeiRate = await contract.usdToWeiRate();
     const usdToEther = ethers.utils.formatEther(usdToWeiRate);
     setUsdToEther(usdToEther);
+    ethCalculation();
   }
 
 //Calculating the amoutn of Eth/Wei that the investor needs to send, including 1.5% fees.
-    //We have to input the fee at 2%, which is 0.5% higher, to avoid "Error: can't estimate gas" problem from MetaMask
-    const ethCalculation = async () => {
+  //We have to input the fee at 2%, which is 0.5% higher, to avoid "Error: can't estimate gas" problem from MetaMask
+  const ethCalculation = async () => {
       let exchangeRate1 = await contract.usdToWeiRate();
       let ethAmountInWei = BigNumber.from(((inputs.numberOfTokens*500*1.02)*exchangeRate1).toString());
       const ethAmount = ethers.utils.formatUnits(ethAmountInWei, 18);
@@ -88,68 +89,69 @@ const Buytoken = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(inputs);
+    getUsdToEther();
   }
 
   return (
-    <div>
-    <motion.div
-      whileInView={ {x: [-100, 0], opacity: [0, 1]} }
-      transition={ {duration: 1} }
-      className='app__header-info'
-    >
-      <h1 className='head-text'> <span>Buy RPT Tokens</span> </h1>
-    </motion.div>
-
-  <div className='app__header app__flex'>
     <div>
       <motion.div
         whileInView={ {x: [-100, 0], opacity: [0, 1]} }
         transition={ {duration: 1} }
         className='app__header-info'
       >
-          <div className='app__header-badge'>
-            <div className='badge-cmp app__flex'>
-              <span><img src={images.John}/></span>
-              <div style={{ marginLeft: 20 }}>
-                <p>"I want to buy 50 tokens."</p>
-              </div>
-            </div>
-          </div>
+        <h1 className='head-text'> <span>Buy RPT Tokens</span> </h1>
       </motion.div>
+
+      <div className='app__header app__flex'>
+        <div>
+          <motion.div
+            whileInView={ {x: [-100, 0], opacity: [0, 1]} }
+            transition={ {duration: 1} }
+            className='app__header-info'
+          >
+              <div className='app__header-badge'>
+                <div className='badge-cmp app__flex'>
+                  <span><img src={images.John}/></span>
+                  <div style={{ marginLeft: 20 }}>
+                    <p>"I want to buy 100 tokens."</p>
+                  </div>
+                </div>
+              </div>
+          </motion.div>
+        </div>
+
+        <div>
+          <motion.div
+              whileInView={ {scale: [0, 1]} }
+              transition={ {duration: 1, ease: 'easeInOut'} }
+              className='app__execution-tasks'
+          >
+            <h1>Step 1 Connect Your Wallet</h1>
+            <button className='button' onClick={connectWalletHandler}>{connButtonText}</button>
+            <h4>Address: {defaultAccount}</h4>
+            <br/>
+            <h1>Step 2 Buy RPT</h1>
+            <form onSubmit={handleSubmit}>
+              <fieldset>
+              <label>Your Address </label>
+              <br/>
+              <input type="text" name="publicAddress" value={inputs.publicAddress} onChange ={handleChange}/>
+              <br/>
+              <label>Number of Tokens</label>
+              <br/>
+              <input type="number" name="numberOfTokens" value={inputs.numberOfTokens} onChange ={handleChange}/>
+              <br/>
+              <input className= 'button' type="submit"/>
+              </fieldset>
+            </form>
+            <p>{`1 USD = ${usdToEther} Ether`}</p>
+            <h3>{`You will pay ${ethAmount} ETH for ${inputs.numberOfTokens} RPT tokens`}</h3>
+            <button className="button" onClick={buyRPT}>Buy RPT</button>
+          </motion.div>
+        </div>
+        
+      </div>
     </div>
-    <div>
-    <motion.div
-        whileInView={ {scale: [0, 1]} }
-        transition={ {duration: 1, ease: 'easeInOut'} }
-        className='app__execution-tasks'
-    >
-      <h1>Step 1 Connect Your Wallet</h1>
-      <button className='button' onClick={connectWalletHandler}>{connButtonText}</button>
-      <h4>Address: {defaultAccount}</h4>
-      <br/>
-      <h1>Step 2 Buy RPT</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Your Address </label>
-        <input type="text" name="publicAddress" value={inputs.publicAddress} onChange ={handleChange}/>
-        Number of Tokens
-        <input type="number" name="numberOfTokens" value={inputs.numberOfTokens} onChange ={handleChange}/>
-        <input type="submit"/>
-      </form>
-
-      <button className="button" onClick={getUsdToEther}>USD/ETH Exchange Rate</button>
-                    <p>{`1 USD = ${usdToEther} Ether`}</p>
-                    <p>At the exchange rate above and the price of $5 per RPT token, click to find out how much ETH you are going to pay:</p>
-                    <button className="button" onClick={ethCalculation}>ETH Convert</button>
-                    <h3>{`You will pay ${ethAmount} ETH for ${inputs.numberOfTokens} RPT tokens, if you agree please click Buy`}</h3>
-                    <button className="button" onClick={buyRPT}>Buy RPT</button>
-
-    </motion.div>
-      
-    </div>
-    
-
-  </div>
-  </div>
   )
 }
 
