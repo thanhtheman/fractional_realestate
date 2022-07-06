@@ -8,7 +8,8 @@ import './SellToken.scss';
 
 const SellToken = () => {
 
-  const contractAddress = '0x6561cCE1a045858Af95087A05F7EcF66EcF6f021';
+  const contractAddress = '0x917Fc2fE978474CbC3F0e6A7B31D238c5DCD2Ed0';
+
 
   //UI part
   const [errorMessage, setErrorMessage] = useState(null);
@@ -21,16 +22,19 @@ const SellToken = () => {
 
    //For the form
    const [inputs, setInputs] = useState({});
-   const [ethAmount, setEthAmount] = useState(null);
-   const [ethAuctionAmount, setEthAuctionAmount] = useState(null);
-
-
+   
   //etherJS part
   const [usdToEther, setUsdToEther] = useState(null);
   const [currentBalance, setCurrentBalance] = useState(null);
+  const [ethFloorPrice, setEthFloorPrice] = useState(null);
+  const [ethAmount, setEthAmount] = useState(null);
+  const [ethAuctionAmount, setEthAuctionAmount] = useState(null);
+  const [bidIncrement, setBidIncrement] = useState(null);
+  const [highestBindingBid, setHighestBindingBid] = useState(null);
+  const [ethBidAmount, setBidAmount] = useState(null);
+
 
   //Connect Wallet
-
   const connectWalletHandler = () => {
     if(window.ethereum) {
         window.ethereum.request({method: "eth_requestAccounts"})
@@ -70,6 +74,7 @@ const SellToken = () => {
     console.log(inputs);
     getUsdToEther();
     ethAuctionCalculation();
+    convertBidAmount();
   }
 
   //USD to ETH exchange rate, provided by Chainlink Live Data Feed
@@ -83,17 +88,54 @@ const SellToken = () => {
     //Auction functions
 
     const ethAuctionCalculation = async () => {
-    let exchangeRate4 = await contract.usdToWeiRate();
-    let ethAuctionAmountInWei = BigNumber.from(((inputs.numberOfTokenSales*inputs.floorPriceUSD*100)*exchangeRate4).toString());
-    const ethAuctionAmount = ethers.utils.formatUnits(ethAuctionAmountInWei, 18);
-    setEthAuctionAmount(ethAuctionAmount);
+      let exchangeRate4 = await contract.usdToWeiRate();
+      let ethAuctionAmountInWei = BigNumber.from(((inputs.numberOfTokenSales*inputs.floorPriceUSD*100)*exchangeRate4).toString());
+      const ethAuctionAmount = ethers.utils.formatUnits(ethAuctionAmountInWei, 18);
+      setEthAuctionAmount(ethAuctionAmount);
     } 
 
+
     const startAuction = async () => {
-    let _floorPriceUSD = (inputs.floorPriceUSD*100*inputs.numberOfTokenSales);
-    let _bidIncrementUSD = (inputs.bidIncrementUSD*100);
-    await contract.setFloorPriceAndQuantitySales(_floorPriceUSD, inputs.numberOfTokenSales, _bidIncrementUSD, 10790017, 10790027);
+      let _floorPriceUSD = (inputs.floorPriceUSD*100*inputs.numberOfTokenSales);
+      let _bidIncrementUSD = (inputs.bidIncrementUSD*100);
+      await contract.setFloorPriceAndQuantitySales(_floorPriceUSD, inputs.numberOfTokenSales, _bidIncrementUSD, 10978483, 10978495);
     }
+
+    const checkEndBlock = async () => {
+      let _checkEndBlock = await contract.endBlock();
+      console.log(BigNumber.from(_checkEndBlock).toString());
+    }
+
+    // Get basic information of the auction
+    const convertFloorPriceToWei = async () => {
+      let price1 = await contract.floorPriceInWei();
+      let price2 = BigNumber.from((price1).toString());
+      const ethFloorPrice = ethers.utils.formatUnits(price2, 18);
+      setEthFloorPrice(ethFloorPrice);
+      bidIncrement =  await contract.bidIncrement();
+      setBidIncrement(bidIncrement);
+      console.log(bidIncrement.toString());
+      highestBindingBid = await contract.highestBindingBid();;
+      setHighestBindingBid(highestBindingBid);
+      console.log(highestBindingBid.toString());
+    }
+  
+    const convertBidAmount = async () => {
+      let exchangeRate6 = await contract.usdToWeiRate();
+      let quantityTokenSales2 = await contract.quantityRPTSales();
+      let ethBidAmountInWei = BigNumber.from((inputs.bidPriceUSD*100*quantityTokenSales2*exchangeRate6).toString());
+      ethBidAmount = ethers.utils.formatUnits(ethBidAmountInWei, 18);
+      setBidAmount(ethBidAmount);
+    }
+
+    const submitBid = async () => {
+      let exchangeRate7 = await contract.usdToWeiRate();
+      let quantityTokenSales2 = await contract.quantityRPTSales()
+      let rawNumber = inputs.bidPriceUSD*100*quantityTokenSales2*exchangeRate7;
+      console.log(rawNumber);
+      await contract.submitBids({ value: rawNumber.toString() });
+    }
+    
 
   return (
     <div>
@@ -138,7 +180,7 @@ const SellToken = () => {
               transition={ {duration: 1, ease: 'easeInOut'} }
               className='app__execution-tasks'
           >
-            <h1>Step 1 Connect Your Wallet</h1>
+            <h1>Step 1: Connect Wallet</h1>
             <button className='button' onClick={connectWalletHandler}>{connButtonText}</button>
             <h4>Address: {defaultAccount}</h4>
             <br/>
@@ -162,6 +204,7 @@ const SellToken = () => {
             <p>{`1 USD = ${usdToEther} Ether`}</p>
             <h3>{`You are asking ${ethAuctionAmount} ETH for ${inputs.numberOfTokenSales}`}</h3>
             <button className="button" onClick={startAuction}>Start Auction</button>
+            <button className="button" onClick={checkEndBlock}>end block</button>
           </motion.div>
         </div>
         
@@ -186,7 +229,7 @@ const SellToken = () => {
                 <div className='badge-cmp app__flex'>
                   <span><img src={images.Dave}/></span>
                   <div style={{ marginLeft: 20 }}>
-                    <p>"I want to bid $10 per token."</p>
+                    <p>"I want to bid $12 per token."</p>
                   </div>
                 </div>
               </div>
@@ -195,7 +238,7 @@ const SellToken = () => {
                 <div className='badge-cmp app__flex'>
                   <span><img src={images.Lisa}/></span>
                   <div style={{ marginLeft: 20 }}>
-                    <p>"I want to bid $12 per token"</p>
+                    <p>"I want to bid $20 per token"</p>
                   </div>
                 </div>
               </div>
@@ -217,30 +260,32 @@ const SellToken = () => {
               transition={ {duration: 1, ease: 'easeInOut'} }
               className='app__execution-tasks'
           >
-            <h1>Step 1 Connect Your Wallet</h1>
+            <h1>Step 1: Connect Wallet</h1>
             <button className='button' onClick={connectWalletHandler}>{connButtonText}</button>
             <h4>Address: {defaultAccount}</h4>
             <br/>
-            <h1>Step 2: Run Auction</h1>
+            <h1>Step 2: Auction Details </h1>
+            <button className='button' onClick={convertFloorPriceToWei}>Get Details</button>
+            <h3>{`The floor price is $${inputs.floorPriceUSD} USD per token`}</h3>
+            <h3>{`The number of tokens is ${inputs.numberOfTokenSales}`}</h3>
+            <h3>{`The USD bid increment is $${inputs.bidIncrementUSD}`}</h3>
+            <h3>{`In total ETH: ${ethFloorPrice} for ${inputs.numberOfTokenSales} tokens`}</h3>
+            <h3>{`The bid increment is ${bidIncrement} ETH`}</h3>
+            <h3>{`The highest binding bid is ${highestBindingBid} ETH`}</h3>
+            <br/>
+            <h1>Step 3: Submit Bid</h1>
             <form onSubmit={handleSubmit}>
               <fieldset>
-              <label>Minimum Price-USD </label>
+              <label>Your Best Bid per Token (USD)</label>
               <br/>
-              <input type="number" name="floorPriceUSD" value={inputs.floorPriceUSD} onChange ={handleChange}/>
-              <br/>
-              <label>Number of Tokens</label>
-              <br/>
-              <input type="number" name="numberOfTokenSales" value={inputs.numberOfTokenSales} onChange ={handleChange}/>
-              <br/>
-              <label>Incremental Bid - USD</label>
-              <br/>
-              <input type="number" name="bidIncrementUSD" value={inputs.bidIncrementUSD} onChange ={handleChange}/>
+              <input type="number" name="bidPriceUSD" value={inputs.bidPriceUSD} onChange ={handleChange}/>
+              
               <input className= 'button' type="submit"/>
               </fieldset>
             </form>
             <p>{`1 USD = ${usdToEther} Ether`}</p>
-            <h3>{`You are asking ${ethAuctionAmount} ETH for ${inputs.numberOfTokenSales}`}</h3>
-            <button className="button" onClick={startAuction}>Start Auction</button>
+            <h3>{`Your Bid in ETH is ${ethBidAmount}`}</h3>
+            <button className="button" onClick={submitBid}>Place Bid</button>
           </motion.div>
         </div>
         

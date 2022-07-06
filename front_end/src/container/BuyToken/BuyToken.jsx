@@ -7,8 +7,8 @@ import Auction_abi from "../../Auction_abi.json";
 import './BuyToken.scss';
 
 const Buytoken = () => {
-
-  const contractAddress = '0x6561cCE1a045858Af95087A05F7EcF66EcF6f021';
+  
+  const contractAddress = '0x917Fc2fE978474CbC3F0e6A7B31D238c5DCD2Ed0';
 
   //UI part
   const [errorMessage, setErrorMessage] = useState(null);
