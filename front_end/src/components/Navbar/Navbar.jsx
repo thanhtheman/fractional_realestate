@@ -18,7 +18,7 @@ const Navbar = () => {
         </div>
 
         <ul className='app__navbar-links'>
-            {['home', 'introduction', 'buy token', 'dividend', 'sell token'].map((item)=>(
+            {['home', 'introduction', 'buy token', 'dividend', 'sell token', 'footer'].map((item)=>(
                 <li className='app_navbar-links' key={`link-${item}`}>
                     <a href={`#${item}`}>{item}</a>
                 </li>

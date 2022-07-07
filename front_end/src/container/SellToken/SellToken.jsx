@@ -160,7 +160,7 @@ const SellToken = () => {
           >
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.John} alt='john'/></span>
+                  <span><img src={images.John} alt='john'/> <p className='bold-text'>John</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I want to sell 50 tokens."</p>
                   </div>
@@ -169,7 +169,7 @@ const SellToken = () => {
               <br/>
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.Dave} alt='dave'/></span>
+                  <span><img src={images.Dave} alt='dave'/><p className='bold-text'>Dave</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"Sure, you can just fill out the form and run the auction."</p>
                   </div>
@@ -230,7 +230,7 @@ const SellToken = () => {
           >
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.Dave}/></span>
+                  <span><img src={images.Dave}/><p className='bold-text'>Dave</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I want to bid $12 per token."</p>
                   </div>
@@ -239,7 +239,7 @@ const SellToken = () => {
               <br/>
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.Lisa}/></span>
+                  <span><img src={images.Lisa}/><p className='bold-text'>Lisa</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I want to bid $20 per token"</p>
                   </div>
@@ -248,7 +248,7 @@ const SellToken = () => {
               <br/>
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.Jenny}/></span>
+                  <span><img src={images.Jenny}/><p className='bold-text'>Jenny</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I want to bid $15 per token"</p>
                   </div>
@@ -309,7 +309,7 @@ const SellToken = () => {
           >
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.John}/></span>
+                  <span><img src={images.John}/><p className='bold-text'>John</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I am the seller, I want to get my money!"</p>
                   </div>
@@ -318,7 +318,7 @@ const SellToken = () => {
               <br/>
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.Dave}/></span>
+                  <span><img src={images.Dave}/><p className='bold-text'>Dave</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I am not a winner. I want to withdraw my bidding money."</p>
                   </div>
@@ -327,7 +327,7 @@ const SellToken = () => {
               <br/>
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.Lisa}/></span>
+                  <span><img src={images.Lisa}/><p className='bold-text'>Lisa</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I am the winner. I want the tokens and any money left."</p>
                   </div>
@@ -336,7 +336,7 @@ const SellToken = () => {
               <br/>
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.Jenny}/></span>
+                  <span><img src={images.Jenny}/><p className='bold-text'>Jenny</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I am not a winner. I want to withdraw my bidding money."</p>
                   </div>

@@ -113,7 +113,7 @@ const Buytoken = () => {
           >
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.John}/></span>
+                  <span><img src={images.John}/><p className='bold-text'>John</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I want to buy 100 tokens."</p>
                   </div>

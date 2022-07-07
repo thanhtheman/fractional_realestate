@@ -24,7 +24,7 @@ const Introduction = () => {
         >
             <div className='app__header-badge'>
               <div className='badge-cmp app__flex'>
-                <span><img src={images.John}/></span>
+                <span><img src={images.John}/> <p className='bold-text'>John</p></span>
                 <div style={{ marginLeft: 20 }}>
                   <p>"I wish I could own a piece of this condo.<br/> 
                   Too bad, I don't have hundreds of thousands of dollars..."</p>
@@ -40,7 +40,7 @@ const Introduction = () => {
         >
             <div className='app__header-badge'>
               <div className='badge-cmp app__flex'>
-                <span><img src={images.Dave}/></span>
+                <span><img src={images.Dave}/><p className='bold-text'>Dave</p></span>
                 <div style={{ marginLeft: 20 }}>
                   <p>"Hey John, this is Dave - the DeFi real estate operator. I just "tokenized" this property - Token Name: RPT.<br/>
                   <br/>

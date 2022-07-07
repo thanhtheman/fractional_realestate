@@ -1,4 +1,3 @@
-import Auction from "./Auction";
 import React from 'react';
 import { Header, Introduction, BuyToken, Dividend, SellToken, Footer } from './container';
 import Navbar from './components/Navbar/Navbar';
@@ -15,7 +14,6 @@ function App() {
       <Dividend />
       <SellToken />
       <Footer />
-      <Auction />
     </div>
   );
 }

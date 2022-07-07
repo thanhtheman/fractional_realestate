@@ -86,7 +86,7 @@ const Dividend = () => {
           >
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.Jenny}/></span>
+                  <span><img src={images.Jenny}/><p className='bold-text'>Jenny</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"Hey, I just paid my rent $750, by ETH."</p>
                   </div>
@@ -101,7 +101,7 @@ const Dividend = () => {
           >
               <div className='app__header-badge'>
                 <div className='badge-cmp app__flex'>
-                  <span><img src={images.John}/></span>
+                  <span><img src={images.John}/><p className='bold-text'>John</p></span>
                   <div style={{ marginLeft: 20 }}>
                     <p>"I want to collect my monthly dividend."</p>
                   </div>
