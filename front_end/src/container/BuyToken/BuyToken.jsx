@@ -130,7 +130,7 @@ const Buytoken = () => {
               transition={ {duration: 1, ease: 'easeInOut'} }
               className='app__execution-tasks'
           >
-            <h1>Step 1 Connect Your Wallet</h1>
+            <h1>Step 1 Connect Wallet</h1>
             <button className='button' onClick={connectWalletHandler}>{connButtonText}</button>
             <h4>Address: {defaultAccount}</h4>
             <br/>
