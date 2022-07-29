@@ -1,6 +1,8 @@
-# fractional_realestate
-this is a cool web app to let you buy a piece of real estate with just $100!
+# fractional_realestate RPT Token
 
-Clone this git repo, and install all dependencies, get your alchemy key (rinkeby) and your private key,  then you can run it on a local host to experience the app! this app needs to be on rinkeby as we use live ETH/USD price data feed.
+This is a full-stack Web3 DApp powered by 3 smart contracts on the back end that lives on Ethereum blockchain (Rinkeby). The app tokenizes real properties (ERC20) and sells tokens to investors. This app use live price feed oracle from Chainlink ETH/USD rate. Smart contracts are deployed on Rinkeby.
 
- Thank you.
+Tech Stack: Solidity, Hardhat, EtherJS, Openzeppeline, React, SASS, FramerMotion
+
+This is the video demo.
+https://www.youtube.com/watch?v=Y-oZKNmopbE
